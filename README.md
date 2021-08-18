@@ -1,0 +1,1 @@
+# Infostack.AutomationTests
