@@ -6,7 +6,7 @@ class WorkspacesPage {
     this.chooseButton = new Button('button.styles_createButton__1-nnl');
 
     this.titleField = new Input('input[name="title"]');
-    this.saveButton = new Button('button.btn-primary');
+    this.saveButton = new Button('button.btn-success');
    
        
   }
@@ -18,10 +18,9 @@ class WorkspacesPage {
   }
 
   async chooseOldestWorkspace() {
-    const workspaceButtons = await $$('button');
-    const indexOldestWorkspace = workspaceButtons.length - 2;
-    await workspaceButtons[indexOldestWorkspace].waitForDisplayed({ timeout: 5000 });;
-    await workspaceButtons[indexOldestWorkspace].click();
+    const workspaceButtons = await $$('button');    
+    await workspaceButtons[0].waitForDisplayed({ timeout: 5000 });;
+    await workspaceButtons[0].click();
   }
 }
 
