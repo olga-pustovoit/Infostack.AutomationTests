@@ -5,7 +5,7 @@ const rundomNumber = () => Date.now();
 
 const app = new App();
 
-describe('Registration:', function () {
+xdescribe('Registration:', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/signup');
@@ -35,7 +35,7 @@ describe('Registration:', function () {
   });
 });
 
-describe('Login', function () {
+xdescribe('Login', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -65,7 +65,7 @@ describe('Login', function () {
   });
 });
 
-describe('Workspaces', function () {
+xdescribe('Workspaces', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -130,4 +130,82 @@ describe('Workspaces', function () {
     expect(activeWorkspaceTitle).to.be.eql(oldestWorkspaceTitle);
   });
 });
+
+describe('Pages', function () {
+  beforeEach(async function () {
+    await browser.setWindowSize(1440, 960);
+    await browser.url('/login');
+
+    await app.authPage.login({
+      email: `john_admin1@admin.com`,
+      password: 'Pa55word'
+    });
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/workspaces';
+      },
+      { timeout: 5000 },
+    );
+
+    await app.workspacesPage.chooseOldestWorkspace();
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
+
+  });
+
+  afterEach(async function () {
+    await browser.reloadSession();
+  });
+
+  xit('should create new page', async function () {
+    const pages = await $$('div.text-break');
+
+    let pagesCount = pages.length;
+
+    await app.pagesPage.createPage();
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url !== 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
+
+    const newPages = await $$('div.text-break');
+
+    const newPagesCount = newPages.length;
+
+    expect(newPagesCount).to.be.eql(++pagesCount);
+  });
+
+  it('should change page title', async function () {
+    await app.pagesPage.chooseCreatedPage();
+
+    const url = await browser.getUrl();
+    const editorUrl = url + '/editor';
+    
+    await app.pagesPage.goToEdit(editorUrl);   
+
+    const newTitle = `New Name ${rundomNumber()}`;
+
+    await app.pagesPage.changePageTitle(newTitle, editorUrl);
+
+    const pageTitle = await $('h1.h3');
+    await pageTitle.waitForDisplayed({ timeout: 5000 });
+    const pageTitleValue = await pageTitle.getText();
+
+    expect(pageTitleValue).to.be.eql(newTitle);
+  });
+
+});
+
 
