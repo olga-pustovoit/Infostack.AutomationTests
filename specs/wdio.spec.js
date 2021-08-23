@@ -187,7 +187,7 @@ describe('Pages', function () {
     expect(newPagesCount).to.be.eql(++pagesCount);
   });
 
-  it('should change page title', async function () {
+  xit('should change page title', async function () {
     await app.pagesPage.chooseCreatedPage();
 
     const url = await browser.getUrl();
@@ -207,5 +207,120 @@ describe('Pages', function () {
   });
 
 });
+
+/////////////////////////////PROFİLE MENU////////////////////////////////////////////
+
+describe('Should be able to access Settings page:', function () {
+  beforeEach(async function () {
+    await browser.setWindowSize(1440, 960);
+    await browser.url('/login');
+
+    await app.authPage.login({
+      email: `john_admin1@admin.com`,
+      password: 'Pa55word'
+    });
+   
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/workspaces';
+      },
+      { timeout: 5000 },
+    );
+  
+       await app.workspacesPage.chooseOldestWorkspace();
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
+
+  });
+   
+  afterEach(async function () {
+    await browser.reloadSession();
+  });
+  it('should be able to use dropdown menu', async function () {
+   
+    await app.mainPage.goToSettings({menuSettings:'Settings'}); 
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/settings/profile';
+      },
+      { timeout: 5000 },
+    );
+
+    const url = await browser.getUrl();
+    expect(url).to.be.eql('http://bsa-infostack.herokuapp.com/settings/profile');
+  });
+});
+////////////////////////////////////update profile info SETTİNGS PAGE////////////////////////////////////////
+
+
+describe('Should be able to update profile at Settings page:', function () {
+  beforeEach(async function () {
+    await browser.setWindowSize(1440, 960);
+    await browser.url('/login');
+
+    await app.authPage.login({
+      email: `john_admin1@admin.com`,
+      password: 'Pa55word'
+    });
+   
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/workspaces';
+      },
+      { timeout: 5000 },
+    );
+  
+       await app.workspacesPage.chooseOldestWorkspace();
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
+
+  });
+   
+  afterEach(async function () {
+    await browser.reloadSession();
+  });
+  it('should be able to use dropdown menu', async function () {
+   
+    await app.mainPage.goToSettings({menuSettings:'Settings'}); 
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/settings/profile';
+      },
+      { timeout: 5000 },
+    );
+
+    await app.settingsPage.update({
+      name: `John${rundomNumber()}`,
+      title: `marcus${rundomNumber()}`,
+      skill: `dev${rundomNumber()}`
+    });
+    const updatedName=await app.settingsPage.update({name});
+    const userNameProfile = await $('span.text-dark.userName');
+    await userNameProfile.waitForDisplayed({ timeout: 5000 });
+    const nameProfile = await userNameProfile.getText();
+
+    expect(nameProfile).to.be.eql(name);
+    
+  });
+
+
+  });
+
 
 
