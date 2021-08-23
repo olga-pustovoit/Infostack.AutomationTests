@@ -187,7 +187,7 @@ describe('Pages', function () {
     expect(newPagesCount).to.be.eql(++pagesCount);
   });
 
-  it('should change page title', async function () {
+  xit('should change page title', async function () {
     await app.pagesPage.chooseCreatedPage();
 
     const url = await browser.getUrl();
@@ -204,6 +204,25 @@ describe('Pages', function () {
     const pageTitleValue = await pageTitle.getText();
 
     expect(pageTitleValue).to.be.eql(newTitle);
+  });
+
+  it('should change page content', async function () {
+    await app.pagesPage.chooseCreatedPage();
+
+    const url = await browser.getUrl();
+    const editorUrl = url + '/editor';
+    
+    await app.pagesPage.goToEdit(editorUrl);   
+
+    const newContent = `New Content ${rundomNumber()}`;
+
+    await app.pagesPage.changePageContent(newContent, editorUrl);
+
+    const pageContent = await $('div.styles_content__3x4VI');
+    await pageContent.waitForDisplayed({ timeout: 5000 });
+    const pageContentValue = await pageContent.getText();
+
+    expect(pageContentValue).to.be.eql(newContent);
   });
 
 });

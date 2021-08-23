@@ -59,6 +59,23 @@ class PagesPage {
             { timeout: 5000 }
         );
     }
+    async changePageContent(content, editorUrl) {
+        const contentfield = await $('textarea');
+        // const titleField = inputs[1];
+
+        await contentfield.waitForDisplayed({ timeout: 5000 });
+        await contentfield.setValue(content);
+
+        this.saveButton.click();
+
+        await browser.waitUntil(
+            async function () {
+                const currentUrl = await browser.getUrl();
+                return currentUrl !== editorUrl;
+            },
+            { timeout: 5000 }
+        );
+    }
 }
 
 
