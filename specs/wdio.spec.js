@@ -187,13 +187,35 @@ describe('Pages', function () {
     expect(newPagesCount).to.be.eql(++pagesCount);
   });
 
+  xit('should create new child page', async function () {
+    const pages = await $$('div.text-break');
+
+    let pagesCount = pages.length;
+
+    await app.pagesPage.createChildPage();
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url !== 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
+
+    const newPages = await $$('div.text-break');
+
+    const newPagesCount = newPages.length;
+
+    expect(newPagesCount).to.be.eql(++pagesCount);
+  });
+
   xit('should change page title', async function () {
     await app.pagesPage.chooseCreatedPage();
 
     const url = await browser.getUrl();
     const editorUrl = url + '/editor';
-    
-    await app.pagesPage.goToEdit(editorUrl);   
+
+    await app.pagesPage.goToEdit(editorUrl);
 
     const newTitle = `New Name ${rundomNumber()}`;
 
@@ -206,13 +228,13 @@ describe('Pages', function () {
     expect(pageTitleValue).to.be.eql(newTitle);
   });
 
-  it('should change page content', async function () {
+  xit('should change page content', async function () {
     await app.pagesPage.chooseCreatedPage();
 
     const url = await browser.getUrl();
     const editorUrl = url + '/editor';
-    
-    await app.pagesPage.goToEdit(editorUrl);   
+
+    await app.pagesPage.goToEdit(editorUrl);
 
     const newContent = `New Content ${rundomNumber()}`;
 
@@ -223,6 +245,20 @@ describe('Pages', function () {
     const pageContentValue = await pageContent.getText();
 
     expect(pageContentValue).to.be.eql(newContent);
+  });
+
+  it('should delete page', async function () {
+    await app.pagesPage.chooseCreatedPage();
+
+    const url = await browser.getUrl();  
+
+    await app.pagesPage.deletePage();
+
+    const toastMessageArea = await $('div.Toastify__toast-body');
+    await toastMessageArea.waitForDisplayed({ timeout: 5000});
+    const message = await toastMessageArea.getText();
+
+    expect(message).to.be.eql('Page has been deleted successfully.');
   });
 
 });
