@@ -7,7 +7,6 @@ class WorkspacesPage {
 
     this.titleField = new Input('input[name="title"]');
     this.saveButton = new Button('button.btn-success');
-   
        
   }
 

@@ -304,18 +304,19 @@ describe('Should be able to update profile at Settings page:', function () {
       },
       { timeout: 5000 },
     );
+    const newSkill = `Dev${rundomNumber()}`;
 
     await app.settingsPage.update({
       name: `John${rundomNumber()}`,
       title: `marcus${rundomNumber()}`,
-      skill: `dev${rundomNumber()}`
+      skill: newSkill
     });
-    const updatedName=await app.settingsPage.update({name});
-    const userNameProfile = await $('span.text-dark.userName');
-    await userNameProfile.waitForDisplayed({ timeout: 5000 });
-    const nameProfile = await userNameProfile.getText();
+    const skill = await $('div*=Dev');
+    await skill.waitForDisplayed({ timeout: 5000 });
+    const skillValue = await skill.getText();
 
-    expect(nameProfile).to.be.eql(name);
+    expect(skillValue).to.be.eql(newSkill);
+
     
   });
 
