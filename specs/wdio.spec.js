@@ -131,7 +131,7 @@ xdescribe('Workspaces', function () {
   });
 });
 
-describe('Pages', function () {
+xdescribe('Pages', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -192,8 +192,8 @@ describe('Pages', function () {
 
     const url = await browser.getUrl();
     const editorUrl = url + '/editor';
-    
-    await app.pagesPage.goToEdit(editorUrl);   
+
+    await app.pagesPage.goToEdit(editorUrl);
 
     const newTitle = `New Name ${rundomNumber()}`;
 
@@ -219,7 +219,7 @@ describe('Should be able to access Settings page:', function () {
       email: `john_admin1@admin.com`,
       password: 'Pa55word'
     });
-   
+
     await browser.waitUntil(
       async function () {
         const url = await browser.getUrl();
@@ -227,8 +227,8 @@ describe('Should be able to access Settings page:', function () {
       },
       { timeout: 5000 },
     );
-  
-       await app.workspacesPage.chooseOldestWorkspace();
+
+    await app.workspacesPage.chooseOldestWorkspace();
     await browser.waitUntil(
       async function () {
         const url = await browser.getUrl();
@@ -238,13 +238,14 @@ describe('Should be able to access Settings page:', function () {
     );
 
   });
-   
+
   afterEach(async function () {
     await browser.reloadSession();
   });
-  xit('should be able to use dropdown menu', async function () {
-   
-    await app.mainPage.goToSettings({menuSettings:'Settings'}); 
+
+  it('should be able to use dropdown menu', async function () {
+
+    await app.mainPage.goToSettings({ menuSettings: 'Settings' });
 
     await browser.waitUntil(
       async function () {
@@ -270,7 +271,7 @@ describe('Should be able to update profile at Settings page:', function () {
       email: `john_admin1@admin.com`,
       password: 'Pa55word'
     });
-   
+
     await browser.waitUntil(
       async function () {
         const url = await browser.getUrl();
@@ -278,8 +279,8 @@ describe('Should be able to update profile at Settings page:', function () {
       },
       { timeout: 5000 },
     );
-  
-       await app.workspacesPage.chooseOldestWorkspace();
+
+    await app.workspacesPage.chooseOldestWorkspace();
     await browser.waitUntil(
       async function () {
         const url = await browser.getUrl();
@@ -289,13 +290,13 @@ describe('Should be able to update profile at Settings page:', function () {
     );
 
   });
-   
+
   afterEach(async function () {
     await browser.reloadSession();
   });
-  xit('should be able to use dropdown menu', async function () {
-   
-    await app.mainPage.goToSettings({menuSettings:'Settings'}); 
+
+  it('should be able to use dropdown menu', async function () {
+    await app.mainPage.goToSettings({ menuSettings: 'Settings' });
 
     await browser.waitUntil(
       async function () {
@@ -304,6 +305,7 @@ describe('Should be able to update profile at Settings page:', function () {
       },
       { timeout: 5000 },
     );
+
     const newSkill = `Dev${rundomNumber()}`;
 
     await app.settingsPage.update({
@@ -311,100 +313,97 @@ describe('Should be able to update profile at Settings page:', function () {
       title: `marcus${rundomNumber()}`,
       skill: newSkill
     });
-    const skill = await $('div*=Dev');
-    await skill.waitForDisplayed({ timeout: 5000 });
-    const skillValue = await skill.getText();
+
+    const skills = await $$('div.css-12jo7m5');
+    const topSkill = await skills[0];
+    await topSkill.waitForDisplayed({ timeout: 5000 });
+    const skillValue = await topSkill.getText();
 
     expect(skillValue).to.be.eql(newSkill);
-
-    
   });
-
-
-  });
+});
 ///////////////////////////////////teams///////////////////////////////////////////////////////
 
-  describe('Should be able to use Teams page:', function () {
-    beforeEach(async function () {
-      await browser.setWindowSize(1440, 960);
-      await browser.url('/login');
-  
-      await app.authPage.login({
-        email: `john_admin1@admin.com`,
-        password: 'Pa55word'
-      });
-     
-      await browser.waitUntil(
-        async function () {
-          const url = await browser.getUrl();
-          return url === 'http://bsa-infostack.herokuapp.com/workspaces';
-        },
-        { timeout: 5000 },
-      );
-    
-         await app.workspacesPage.chooseOldestWorkspace();
-      await browser.waitUntil(
-        async function () {
-          const url = await browser.getUrl();
-          return url === 'http://bsa-infostack.herokuapp.com/';
-        },
-        { timeout: 5000 },
-      );
+describe('Should be able to use Teams page:', function () {
+  beforeEach(async function () {
+    await browser.setWindowSize(1440, 960);
+    await browser.url('/login');
 
-      await app.mainPage.goToSettings({menuSettings:'Settings'}); 
-
-      await browser.waitUntil(
-        async function () {
-          const url = await browser.getUrl();
-          return url === 'http://bsa-infostack.herokuapp.com/settings/profile';
-        },
-        { timeout: 5000 },
-      );
-  
+    await app.authPage.login({
+      email: `john_admin1@admin.com`,
+      password: 'Pa55word'
     });
-     
-    afterEach(async function () {
-      await browser.reloadSession();
-    });
-    it('should be able to use dropdown menu', async function () {
-     
-      await app.settingsPage.goToItem({menuOption:'Teams'});
 
-      await browser.waitUntil(
-        async function () {
-          const url = await browser.getUrl();
-          return url === 'http://bsa-infostack.herokuapp.com/settings/teams';
-        },
-        { timeout: 5000 },
-      );
-      const teamName = `t${rundomNumber()}`; 
-      await app.teamsPage.addTeam({ title: teamName});
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/workspaces';
+      },
+      { timeout: 5000 },
+    );
 
-      await app.teamsPage.goToMenuItem({menuOption:'Edit'});
+    await app.workspacesPage.chooseOldestWorkspace();
 
-      await app.teamsPage.editTeam({ title: teamName }); 
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
 
-      await app.teamsPage.goToMenuItem({menuOption:'Delete'});
+    await app.mainPage.goToSettings({ menuSettings: 'Settings' });
 
-     // function reload(){
-      //setTimeout(function(){
-      //location.reload();},5000);}
-      //reload();
-      
-      const teams = await $$('div.card-title.h5');
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/settings/profile';
+      },
+      { timeout: 5000 },
+    );
+  });
 
-      const lastTeam =await teams[teams.length - 1];
+  afterEach(async function () {
+    await browser.reloadSession();
+  });
 
-      const lastTeamTitle = await lastTeam.getText();
+  it('should be able to use dropdown menu', async function () {
 
-      expect(lastTeamTitle).to.be.eql(teamName);
-   
-      });
-  
-      
-    });
-  
-  
-  
+    await app.settingsPage.goToItem({ menuOption: 'Teams' });
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/settings/teams';
+      },
+      { timeout: 5000 },
+    );
+
+    const teamName = `t${rundomNumber()}`;
+
+    await app.teamsPage.addTeam({ title: teamName });
+    await app.teamsPage.goToEditItem();
+    await app.teamsPage.editTeam({ title: teamName });
+    await app.teamsPage.goToDeleteItem();
+    await app.teamsPage.confirmDeleteButton.click();
+
+    await browser.waitUntil(
+      async function () {
+        const teams = await $$('div.card-title.h5');
+        return teams.length > 0;
+      },
+      { timeout: 5000 },
+    );
+
+    const teams = await $$('div.card-title.h5');
+    const lastTeam = await teams[teams.length - 1];
+    const lastTeamTitle = await lastTeam.getText();
+
+    expect(lastTeamTitle).to.be.eql(teamName);
+  });
+});
+
+
+
 
 
