@@ -242,7 +242,7 @@ describe('Should be able to access Settings page:', function () {
   afterEach(async function () {
     await browser.reloadSession();
   });
-  it('should be able to use dropdown menu', async function () {
+  xit('should be able to use dropdown menu', async function () {
    
     await app.mainPage.goToSettings({menuSettings:'Settings'}); 
 
@@ -293,7 +293,7 @@ describe('Should be able to update profile at Settings page:', function () {
   afterEach(async function () {
     await browser.reloadSession();
   });
-  it('should be able to use dropdown menu', async function () {
+  xit('should be able to use dropdown menu', async function () {
    
     await app.mainPage.goToSettings({menuSettings:'Settings'}); 
 
@@ -322,6 +322,89 @@ describe('Should be able to update profile at Settings page:', function () {
 
 
   });
+///////////////////////////////////teams///////////////////////////////////////////////////////
 
+  describe('Should be able to use Teams page:', function () {
+    beforeEach(async function () {
+      await browser.setWindowSize(1440, 960);
+      await browser.url('/login');
+  
+      await app.authPage.login({
+        email: `john_admin1@admin.com`,
+        password: 'Pa55word'
+      });
+     
+      await browser.waitUntil(
+        async function () {
+          const url = await browser.getUrl();
+          return url === 'http://bsa-infostack.herokuapp.com/workspaces';
+        },
+        { timeout: 5000 },
+      );
+    
+         await app.workspacesPage.chooseOldestWorkspace();
+      await browser.waitUntil(
+        async function () {
+          const url = await browser.getUrl();
+          return url === 'http://bsa-infostack.herokuapp.com/';
+        },
+        { timeout: 5000 },
+      );
+
+      await app.mainPage.goToSettings({menuSettings:'Settings'}); 
+
+      await browser.waitUntil(
+        async function () {
+          const url = await browser.getUrl();
+          return url === 'http://bsa-infostack.herokuapp.com/settings/profile';
+        },
+        { timeout: 5000 },
+      );
+  
+    });
+     
+    afterEach(async function () {
+      await browser.reloadSession();
+    });
+    it('should be able to use dropdown menu', async function () {
+     
+      await app.settingsPage.goToItem({menuOption:'Teams'});
+
+      await browser.waitUntil(
+        async function () {
+          const url = await browser.getUrl();
+          return url === 'http://bsa-infostack.herokuapp.com/settings/teams';
+        },
+        { timeout: 5000 },
+      );
+      const teamName = `t${rundomNumber()}`; 
+      await app.teamsPage.addTeam({ title: teamName});
+
+      await app.teamsPage.goToMenuItem({menuOption:'Edit'});
+
+      await app.teamsPage.editTeam({ title: teamName }); 
+
+      await app.teamsPage.goToMenuItem({menuOption:'Delete'});
+
+     // function reload(){
+      //setTimeout(function(){
+      //location.reload();},5000);}
+      //reload();
+      
+      const teams = await $$('div.card-title.h5');
+
+      const lastTeam =await teams[teams.length - 1];
+
+      const lastTeamTitle = await lastTeam.getText();
+
+      expect(lastTeamTitle).to.be.eql(teamName);
+   
+      });
+  
+      
+    });
+  
+  
+  
 
 
