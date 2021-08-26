@@ -1,14 +1,25 @@
-const { Button, Input } = require('../elements');
+const { Button, Input, Span } = require('../elements');
 
 class PagesPage {
     constructor() {
         this.addPage = new Button('i.bi-plus', 0);
         this.addChildPage = new Button('i.bi-plus', 1);
+        this.firstPage = new Button('a.styles_navbarLinkInsideSection__2x1ZG', 0);
+
+        this.pageTitle = new Input('input.form-control', 1);
+        this.pageContent = new Input('textarea');
         // this.pageSettings = new Button('a.styles_dropdownButton__1n_oX');
-        this.deleteConfirmPageButton = new Button('button.btn-danger');
+        this.confirmDeleteButton = new Button('button.btn-danger');
         this.saveButton = new Button('button.btn-success');
+
+        this.addCommentButton = new Button('button.btn-success');
+        this.commentInput = new Input('textarea[placeholder="Add a comment"]');
+        this.newestComment = new Span('div.styles_text__3OXVu', 0);
+
+        this.firstDeleteCommentButton = new Button('a*=delete');
+
     }
-sss
+
     async createPage() {
         this.addPage.click();
     }
@@ -19,9 +30,7 @@ sss
 
     async chooseCreatedPage() {
         const initUrl = await browser.getUrl();
-        const pages = await $$('a.styles_navbarLinkInsideSection__2x1ZG');
-        await pages[0].waitForDisplayed({ timeout: 5000 });
-        await pages[0].click();
+        await this.firstPage.click();
 
         await browser.waitUntil(
             async function () {
@@ -36,8 +45,7 @@ sss
         const pageSettings = await $('a.styles_dropdownButton__1n_oX');
         await pageSettings.click();
         const options = await $$('a.styles_dropdownItem__QVY0D ');
-        const editButton = options[2];
-        // const editButton = await options.find(option => option.getText() === 'Edit');
+        const editButton = options[3];
         await editButton.waitForDisplayed({ timeout: 5000 });
         await editButton.click();
 
@@ -54,12 +62,12 @@ sss
         const pageSettings = await $('a.styles_dropdownButton__1n_oX');
         await pageSettings.click();
         const options = await $$('a.styles_dropdownItem__QVY0D ');
-        const deleteButton = options[3];
+        const deleteButton = options[4];
         // const editButton = await options.find(option => option.getText() === 'Edit');
         await deleteButton.waitForDisplayed({ timeout: 5000 });
         await deleteButton.click();
 
-        this.deleteConfirmPageButton.click();
+        this.confirmDeleteButton.click();
 
         await browser.waitUntil(
             async function () {
@@ -71,13 +79,8 @@ sss
     }
 
     async changePageTitle(title, editorUrl) {
-        const inputs = await $$('input.form-control');
-        const titleField = inputs[1];
-
-        await titleField.waitForDisplayed({ timeout: 5000 });
-        await titleField.setValue(title);
-
-        this.saveButton.click();
+        await this.pageTitle.setValue(title);
+        await this.saveButton.click();
 
         await browser.waitUntil(
             async function () {
@@ -87,14 +90,10 @@ sss
             { timeout: 5000 }
         );
     }
+
     async changePageContent(content, editorUrl) {
-        const contentfield = await $('textarea');
-        // const titleField = inputs[1];
-
-        await contentfield.waitForDisplayed({ timeout: 5000 });
-        await contentfield.setValue(content);
-
-        this.saveButton.click();
+        await this.pageContent.setValue(content);
+        await this.saveButton.click();
 
         await browser.waitUntil(
             async function () {
@@ -103,6 +102,16 @@ sss
             },
             { timeout: 5000 }
         );
+    }
+
+    async addComment(comment) {
+        await this.commentInput.setValue(comment);
+        await this.addCommentButton.click();
+    }
+
+    async deleteFirstComment() {
+        await this.firstDeleteCommentButton.click();
+        await this.confirmDeleteButton.click();
     }
 }
 

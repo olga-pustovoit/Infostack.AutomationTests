@@ -5,7 +5,7 @@ const rundomNumber = () => Date.now();
 
 const app = new App();
 
-xdescribe('Registration:', function () {
+describe('Registration:', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/signup');
@@ -35,7 +35,7 @@ xdescribe('Registration:', function () {
   });
 });
 
-xdescribe('Login', function () {
+describe('Login', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -65,7 +65,7 @@ xdescribe('Login', function () {
   });
 });
 
-xdescribe('Workspaces', function () {
+describe('Workspaces', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -165,7 +165,7 @@ describe('Pages', function () {
     await browser.reloadSession();
   });
 
-  xit('should create new page', async function () {
+  it('should create new page', async function () {
     const pages = await $$('div.text-break');
 
     let pagesCount = pages.length;
@@ -187,7 +187,7 @@ describe('Pages', function () {
     expect(newPagesCount).to.be.eql(++pagesCount);
   });
 
-  xit('should create new child page', async function () {
+  it('should create new child page', async function () {
     const pages = await $$('div.text-break');
 
     let pagesCount = pages.length;
@@ -209,7 +209,7 @@ describe('Pages', function () {
     expect(newPagesCount).to.be.eql(++pagesCount);
   });
 
-  xit('should change page title', async function () {
+  it('should change page title', async function () {
     await app.pagesPage.chooseCreatedPage();
 
     const url = await browser.getUrl();
@@ -228,7 +228,7 @@ describe('Pages', function () {
     expect(pageTitleValue).to.be.eql(newTitle);
   });
 
-  xit('should change page content', async function () {
+  it('should change page content', async function () {
     await app.pagesPage.chooseCreatedPage();
 
     const url = await browser.getUrl();
@@ -250,15 +250,57 @@ describe('Pages', function () {
   it('should delete page', async function () {
     await app.pagesPage.chooseCreatedPage();
 
-    const url = await browser.getUrl();  
+    const url = await browser.getUrl();
 
     await app.pagesPage.deletePage();
 
     const toastMessageArea = await $('div.Toastify__toast-body');
-    await toastMessageArea.waitForDisplayed({ timeout: 5000});
+    await toastMessageArea.waitForDisplayed({ timeout: 5000 });
     const message = await toastMessageArea.getText();
 
     expect(message).to.be.eql('Page has been deleted successfully.');
+  });
+
+  it('should create comment', async function () {
+    const commentText = 'Test create comment'
+    await app.pagesPage.chooseCreatedPage();
+    await app.pagesPage.addComment(commentText);
+
+    const newestComment = await app.pagesPage.newestComment.getValue();
+
+    expect(commentText).to.be.eql(newestComment);
+  });
+
+  it('should delete last comment', async function () {
+    await app.pagesPage.chooseCreatedPage();
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url !== 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
+
+    await browser.waitUntil(
+      async function () {
+        const comments = await $$('div.styles_text__3OXVu');
+        const counts = await comments.length;
+        return counts > 0;
+      },
+      { timeout: 5000 },
+    );
+
+    const comments = await $$('div.styles_text__3OXVu');
+
+    const initCommentCount = comments.length;
+
+    await app.pagesPage.deleteFirstComment();
+
+    const newComments = await $$('div.styles_text__3OXVu');
+    const newCommentCount = newComments.length;
+
+    expect(newCommentCount).to.be.eql(initCommentCount);
   });
 
 });
