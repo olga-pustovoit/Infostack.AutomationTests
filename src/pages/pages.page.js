@@ -18,6 +18,10 @@ class PagesPage {
 
         this.firstDeleteCommentButton = new Button('a*=delete');
 
+        this.editTagButton = new Button ('i.bi-pencil.tags-edit');
+        this.createTagButton = new Button ('div.css-1gl4k7y');
+        this.deleteTagButton = new Button ('div.css-xb97g8');
+        this.tagInput = new Input('input#react-select-2-input');
     }
 
     async createPage() {
@@ -112,6 +116,19 @@ class PagesPage {
     async deleteFirstComment() {
         await this.firstDeleteCommentButton.click();
         await this.confirmDeleteButton.click();
+    }
+
+    async addTag(tag) {
+        await this.editTagButton.click();        
+        await this.tagInput.setValue(tag);  
+        await this.createTagButton.click();      
+        await this.saveButton.click();
+    }
+
+    async deleteTag() {
+        await this.editTagButton.click(); 
+        await this.deleteTagButton.click();      
+        await this.saveButton.click();
     }
 }
 

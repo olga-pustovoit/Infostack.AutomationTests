@@ -5,7 +5,7 @@ const rundomNumber = () => Date.now();
 
 const app = new App();
 
-describe('Registration:', function () {
+xdescribe('Registration:', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/signup');
@@ -35,7 +35,7 @@ describe('Registration:', function () {
   });
 });
 
-describe('Login', function () {
+xdescribe('Login', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -65,7 +65,7 @@ describe('Login', function () {
   });
 });
 
-describe('Workspaces', function () {
+xdescribe('Workspaces', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -131,7 +131,7 @@ describe('Workspaces', function () {
   });
 });
 
-describe('Pages', function () {
+xdescribe('Pages', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -305,4 +305,102 @@ describe('Pages', function () {
 
 });
 
+describe('Tags', function () {
+  beforeEach(async function () {
+    await browser.setWindowSize(1440, 960);
+    await browser.url('/login');
 
+    await app.authPage.login({
+      email: `john_admin1@admin.com`,
+      password: 'Pa55word'
+    });
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/workspaces';
+      },
+      { timeout: 5000 },
+    );
+
+    await app.workspacesPage.chooseOldestWorkspace();
+
+    await browser.waitUntil(
+      async function () {
+        const url = await browser.getUrl();
+        return url === 'http://bsa-infostack.herokuapp.com/';
+      },
+      { timeout: 5000 },
+    );
+
+    await app.pagesPage.chooseCreatedPage();
+  });
+
+  afterEach(async function () {
+    await browser.reloadSession();
+  });
+
+  it('should create new tag', async function () {
+    const newTagName = `New tag ${rundomNumber()}`;
+    const tags = await $$('span.tag-badge');
+
+    let tagsCount = tags.length;
+
+    await app.pagesPage.addTag(newTagName);
+
+    await browser.waitUntil(
+      async function () {
+        const newTags = await $$('span.tag-badge');
+        return newTags.length > 0;
+      },
+      { timeout: 5000 },
+    );
+
+    const newTags = await $$('span.tag-badge');
+
+    const newTagsCount = newTags.length;
+
+    expect(newTagsCount).to.be.eql(++tagsCount);
+  });
+
+  xit('should delete tag', async function () {
+    const tags = await $$('span.tag-badge');
+
+    let tagsCount = tags.length;
+
+    await app.pagesPage.deleteTag();
+
+    await browser.waitUntil(
+      async function () {
+        const newTags = await $$('span.tag-badge');
+        return newTags.length > 0;
+      },
+      { timeout: 5000 },
+    );
+
+    const newTags = await $$('span.tag-badge');
+
+    const newTagsCount = newTags.length;
+
+    expect(newTagsCount).to.be.eql(--tagsCount);
+  });
+
+  xit('should choose tag', async function () {
+    await app.pagesPage.chooseCreatedPage();
+
+    const url = await browser.getUrl();
+    const editorUrl = url + '/editor';
+
+    await app.pagesPage.goToEdit(editorUrl);
+
+    const newTitle = `New Name ${rundomNumber()}`;
+
+    await app.pagesPage.changePageTitle(newTitle, editorUrl);
+
+    const pageTitle = await $('h1.h3');
+    await pageTitle.waitForDisplayed({ timeout: 5000 });
+    const pageTitleValue = await pageTitle.getText();
+
+    expect(pageTitleValue).to.be.eql(newTitle);
+  });
+});
