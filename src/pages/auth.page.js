@@ -5,7 +5,8 @@ class AuthPage {
     this.usernameField = new Input('input[name="fullName"]');
     this.emailField = new Input('input[name="email"]');
     this.passwordField = new Input('input[name="password"]');    
-    this.submitButton = new Button('button');    
+    this.submitLoginButton = new Button('button=Sign in');    
+    this.submitRegistrationButton = new Button('button=Sign up');    
   }
 
   async register({ name, email, password }) {
@@ -13,14 +14,14 @@ class AuthPage {
     await this.emailField.setValue(email);
     await this.passwordField.setValue(password);
 
-    await this.submitButton.click();
+    await this.submitRegistrationButton.click();
   }
 
   async login({email, password}) {
     await this.emailField.setValue(email);
     await this.passwordField.setValue(password);
     
-    await this.submitButton.click();
+    await this.submitLoginButton.click();
   }
 }
 
