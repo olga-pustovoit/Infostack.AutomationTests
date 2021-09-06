@@ -27,8 +27,16 @@ class PagesPage {
 
         this.newestComment = new Span('//*[@id="root"]/div[1]/div[3]/div/div/div[2]/div[4]/div/div/div/div[2]/div/div[1]/div[2]/div[1]');
         this.comments = new Collection('div.styles_text__3OXVu');
+        this.tags = new Collection('span.tag-badge.text-primary');
 
         this.firstDeleteCommentButton = new Button('a*=delete');
+
+        //tags
+        this.editTagButton = new Button ('i.bi-pencil.tags-edit');
+        this.createTagInput = new Input ('input[type="text"]');
+        this.createTagButton = new Button ('div=Create');
+        this.deleteTagButton = new Button ('div.css-xb97g8');
+        this.tagInput = new Input('input#react-select-2-input');
     }
 
     async getPagesCount() {
@@ -38,6 +46,11 @@ class PagesPage {
 
     async getComentsCount() {
         const count = await this.comments.getLength();
+        return count;
+    }
+
+    async getTagsCount() {
+        const count = await this.tags.getLength();
         return count;
     }
 
@@ -63,6 +76,16 @@ class PagesPage {
         await browser.waitUntil(
             async () => {
                 const count = await this.getComentsCount();
+                return count !== initCount;
+            },
+            { timeout: 5000 },
+        );
+    }
+
+    async waitTags(initCount) {
+        await browser.waitUntil(
+            async () => {
+                const count = await this.getTagsCount();
                 return count !== initCount;
             },
             { timeout: 5000 },
@@ -119,6 +142,13 @@ class PagesPage {
     async deleteFirstComment() {
         await this.firstDeleteCommentButton.click();
         await this.confirmDeleteCommentButton.click();
+    }
+
+    async createTag(tagName) {
+        await this.editTagButton.click();
+        await this.createTagInput.setValue(tagName);
+        await this.createTagButton.click();
+        await this.saveButton.click();
     }
 }
 

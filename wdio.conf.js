@@ -26,7 +26,7 @@ exports.config = {
   // will be called from there.
   //
   // specs: ['./specs/**/*.spec.js'],
-  specs: ['./specs/**/*.spec.js'],
+  specs: ['./specs/**/pages.spec.js'],
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'

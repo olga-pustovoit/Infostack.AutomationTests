@@ -6,7 +6,7 @@ const rundomNumber = () => Date.now();
 
 const app = new App();
 
-describe('Pages:', function () {
+xdescribe('Pages:', function () {
   beforeEach(async function () {
     await browser.setWindowSize(1440, 960);
     await browser.url('/login');
@@ -109,6 +109,81 @@ describe('Pages:', function () {
     const newCommentsCount = await app.pagesPage.getComentsCount();
 
     expect(newCommentsCount).to.be.eql(--initCommentsCount);
+  });
+});
+
+describe('Tags', function () {
+  beforeEach(async function () {
+    await browser.setWindowSize(1560, 960);
+    await browser.url('/login');
+
+    await app.authPage.login({
+      email: config.email,
+      password: config.password
+    });
+
+    await app.commonPage.waitUrl('workspaces');
+    await app.workspacesPage.chooseFirstWorkspace();
+    await app.commonPage.waitUrl('');
+    await app.pagesPage.chooseCreatedPage();
+  });
+
+  afterEach(async function () {
+    await browser.reloadSession();
+  });
+
+  it('should create new tag', async function () {
+    const newTagName = `New tag ${rundomNumber()}`;
+
+    await app.pagesPage.waitTags(0);
+    let initTagsCount = await app.pagesPage.getTagsCount();
+
+    await app.pagesPage.createTag(newTagName);
+    await app.pagesPage.waitTags(initTagsCount);
+    const tagsCount = await app.pagesPage.getTagsCount();    
+
+    expect(tagsCount).to.be.eql(++initTagsCount);
+  });
+
+  xit('should delete tag', async function () {
+    const tags = await $$('span.tag-badge');
+
+    let tagsCount = tags.length;
+
+    await app.pagesPage.deleteTag();
+
+    await browser.waitUntil(
+      async function () {
+        const newTags = await $$('span.tag-badge');
+        return newTags.length > 0;
+      },
+      { timeout: 5000 },
+    );
+
+    const newTags = await $$('span.tag-badge');
+
+    const newTagsCount = newTags.length;
+
+    expect(newTagsCount).to.be.eql(--tagsCount);
+  });
+
+  xit('should choose tag', async function () {
+    await app.pagesPage.chooseCreatedPage();
+
+    const url = await browser.getUrl();
+    const editorUrl = url + '/editor';
+
+    await app.pagesPage.goToEdit(editorUrl);
+
+    const newTitle = `New Name ${rundomNumber()}`;
+
+    await app.pagesPage.changePageTitle(newTitle, editorUrl);
+
+    const pageTitle = await $('h1.h3');
+    await pageTitle.waitForDisplayed({ timeout: 5000 });
+    const pageTitleValue = await pageTitle.getText();
+
+    expect(pageTitleValue).to.be.eql(newTitle);
   });
 });
 
