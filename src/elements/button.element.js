@@ -16,6 +16,17 @@ class Button extends BaseElement {
     await element.click();
   }
 
+  async scroll() {
+    let element;
+    if (this.index) {
+      element = (await $$(this.selector))[this.index];
+    } else {
+      element = await $(this.selector);
+    }
+    await this.waitForVisible(element);
+    await element.scrollIntoView();
+  }
+
   async clickByText(text) {
     let element = await $(this.selector.replace('TEXT_TO_REPLACE', text));
     await this.waitForVisible(element);

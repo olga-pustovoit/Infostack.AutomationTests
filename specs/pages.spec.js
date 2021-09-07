@@ -114,7 +114,7 @@ xdescribe('Pages:', function () {
 
 describe('Tags', function () {
   beforeEach(async function () {
-    await browser.setWindowSize(1560, 960);
+    await browser.setWindowSize(1440, 960);
     await browser.url('/login');
 
     await app.authPage.login({
